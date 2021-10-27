@@ -12,6 +12,7 @@ public class ShabatElev3Algo implements ElevatorAlgo {
     private int _direction;
     private Building _building;
     private boolean[] _firstTime;
+
     public ShabatElev3Algo(Building b) {
         _building = b;
         _direction = UP;
