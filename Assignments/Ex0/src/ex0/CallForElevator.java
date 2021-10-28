@@ -19,5 +19,5 @@ public interface CallForElevator {
     /** @return the type of this call {UP,DOWN}; */
     public int getType();
     /** This methods return the index of the Elevator in the building to which this call was assigned to, if not yet Assigned --> return -1 */
-    public int allocatedTo() ;
+    public int allocatedTo();
 }

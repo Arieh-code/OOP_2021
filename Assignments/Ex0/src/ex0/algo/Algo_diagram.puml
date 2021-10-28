@@ -1,0 +1,61 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+
+interface ElevatorAlgo {
+     +Building getBuilding();
+     +String AlgoName();
+     +public int AllocateAnElevator(CallForElevator c);
+     +void cmdElevator(int elev);
+}
+
+class MyElevator implements ElevatorAlgo {
+import (Building, CallForElevator, Elevator)
+    - int UP, DOWN, LEVEL;
+    - int _direction;
+    - private Building _building;
+    - private int [] ElevatorList;
+    - private ArrayList<Integer> [] UpCalls;
+    - private ArrayList <Integer> [] DownCalls;
+    + FindBest(int[] ElevatorList , int Direction, int src);
+
+    public MyElevator(Building b);
+}
+
+interface Elevator{
++int getMinFloor();
++int getMaxFloor();
++double getTimeForOpen();
++double getTimeForClose();
++int getState();
++int getPos();
++boolean goTo(int floor);
++boolean stop(int floor);
++double getSpeed();
++double getStartTime();
++double getStopTime();
++int getID();
+}
+
+interface Building{
++ String getBuildingName();
++ int MinFloor();
++ int maxFloor():
++ int numberOfElevator();
++ Elevator getElevator();
+}
+
+interface CallForElevator {
+-public static final int INIT=0, GOING2SRC=1, GOIND2DEST=2, DONE=3;
+-public static final int UP=1, DOWN=-1;
+
++int getState();
++double getTime(int state);
++int getSrc();
++int getDest();
++int getType();
++int allocatedTo();
+}
+
+
+@enduml
