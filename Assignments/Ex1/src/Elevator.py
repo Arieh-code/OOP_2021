@@ -13,13 +13,13 @@ class Elevator:
         self.stoptime = stoptime
 
 
-    def __getPos__(self):
+    def __getPos__(self, floor):
         pass
 
-    def __goTo__(floor):
+    def __goTo__(self, floor):
         pass
 
-    def __stop__(floor):
+    def __stop__(self, floor):
         pass
 
     def __getMaxFloor__(self):
