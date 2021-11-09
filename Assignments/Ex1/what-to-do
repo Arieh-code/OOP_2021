@@ -1,0 +1,21 @@
+This is what needs to be done to get the assignment done.
+Create elevator class, needs to have a constructor with all things in the dict.
+Add all the function to make the elevator work.
+Create Building class, needs to have a constructor that gets a json file.
+Make function that take json file and converts into dict that you can use as info, for the constructor,
+so the constructor gets building size, min and max floor and a list of elevators in it, which will need to
+be created.
+After that we will have a building class and elevator class, we can make an algorithm for alocating
+an elevator for a call. def allocate(call_file).
+
+So we can reach into the building elevator list and use all the info from the elevators and make our
+allocate work with that info.
+I want the allocate to work directly with an elevator, meaning, once we get an elevator which suits the call
+the allocate will add a command to that elevator. We will have to see how we track the commands so the elevators
+keep doing their jobs.
+
+Lastly we need to connect it all together and make the main function use the Ex1,input,output.
+Ex1: is where our main algo is and will allocate the elevator and make the elevator move.
+Input: that is the calls we get as a csv.
+Output: looks exactly like the calls just has an allocation to each call.
+We have to calculate the time it takes for the total call to get to its station and for the the average waiting time.
