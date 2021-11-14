@@ -4,8 +4,13 @@ import numpy as np
 
 
 class Calls:
-    def __init__(self, csv_file):
-        self.csv_file = csv_file
+    def __init__(self, csv_file_list):
+        self.stam_str = str(csv_file_list[0])
+        self.timeStamp = float(csv_file_list[1])
+        self.originFloor = int(csv_file_list[2])
+        self.destFloor = int(csv_file_list[3])
+        self.status = int(csv_file_list[4])
+        self.elevatorIndex = int(csv_file_list[5])
 
     def make_df(self, file):
         # creating the csv file
@@ -49,3 +54,9 @@ class Calls:
         dataframe.columns = new_header  # set the header row as the df header
         # returning without index
         dataframe.to_csv(df_name, index=False)
+
+    # def allocate(self):
+
+
+    def _str_(self):
+        return self.stam_str, self.timeStamp, self.originFloor, self.destFloor, self.status, self.elevatorIndex
