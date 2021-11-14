@@ -28,16 +28,24 @@ class Calls:
                 dataframe.status[i] = -1
         return dataframe
 
-    # creating a csv with only going up calls and going down calls
-    def create_up_down(self, dataframe):
-        file_up = dataframe[dataframe['status'] == 1]
-        file_down = dataframe[dataframe['status'] == -1]
+    # create df from only elevators going up
+    def create_up(self, dataframe):
+        df_up = dataframe[dataframe['status'] == 1]
+        df_up = df_up.reset_index()
+        return df_up
+
+    # create df from only elevators going down
+    def create_down(self, dataframe):
+        df_down = dataframe[dataframe['status'] == -1]
+        df_down = df_down.reset_index()
+        return df_down
+
         # need to decide if we want to sort according to src or timeStamp
 
     # creating function to return csv file correctly
-    def make_output(self, dataframe):
+    def make_output(self, dataframe, df_name: str = None):
         new_header = dataframe.iloc[0]  # grab the first row for the header
         dataframe = dataframe[1:]  # take the data less the header row
         dataframe.columns = new_header  # set the header row as the df header
         # returning without index
-        dataframe.to_csv('output.csv', index=False)
+        dataframe.to_csv(df_name, index=False)
