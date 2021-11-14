@@ -14,8 +14,15 @@
     the allocate will add a command to that elevator. We will have to see how we track the commands so the elevators
     keep doing their jobs.
 
+#   we need to finish building the times functions, which will help us allocate the right elevator and then we are
+    basically done.
+    What time functions do we have? What do we want to do? How do we want to track all the the time changes?
+    Lets make a decision and just get to work on it.
+
 3.  Lastly we need to connect it all together and make the main function use the Ex1,input,output.
     Ex1: is where our main algo is and will allocate the elevator and make the elevator move.
     Input: that is the calls we get as a csv.
     Output: looks exactly like the calls just has an allocation to each call.
     We have to calculate the time it takes for the total call to get to its stops and for the the average waiting time.
+
+4.
