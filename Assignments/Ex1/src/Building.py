@@ -15,6 +15,8 @@ class Building:
                 elevatorarray.append(newE)
             self.ElevatorArray = elevatorarray
         json_file.close()
+        self.elevator_count = len(elevatorarray)
+        self.timeStmap = 0
 
 
 file = r"C:\Users\arieh\OneDrive\Desktop\B5.json"
