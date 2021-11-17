@@ -1,5 +1,17 @@
 import json
-from Elevator import *
+from elevator import *
+from Call import *
+
+'''
+This is the Building class:
+    1. The __init__ receives a JSON file and extracts the key values:
+        - Minimum Floor.
+        - Maximum Floor.
+        - elevator list.
+        - Number of elevators.
+    2) The class contains an elevator list:
+        - Each index contains an elevator(imported from class - elevator).
+'''
 
 
 class Building:
@@ -8,23 +20,27 @@ class Building:
             json_load = json.load(json_file)
             self.minFloor = json_load['_minFloor']
             self.maxFloor = json_load['_maxFloor']
-            elevatorarray = []
-            for e in json_load['_elevators']:
-                newE = Elevator(e["_id"], e["_speed"], e["_minFloor"], e["_maxFloor"], e["_closeTime"], e["_openTime"],
+            self.ElevatorList = []
+            for e in json_load["_elevators"]:
+                newE = elevator(e["_id"], e["_speed"], e["_minFloor"], e["_maxFloor"], e["_closeTime"], e["_openTime"],
                                 e["_startTime"], e["_stopTime"])
-                elevatorarray.append(newE)
-            self.ElevatorArray = elevatorarray
+                self.ElevatorList.append(newE)
         json_file.close()
-        self.elevator_count = len(elevatorarray)
-        self.timeStmap = 0
+        self.elevatorAmount = len(self.ElevatorList)
 
+    def __str__(self):
+        return "Minimum Floor: {} \nMaximum Floor: {} \nElevator List: {} \nNumber of Elevators: {}".format(
+            self.minFloor, self.maxFloor,
+            [e.__str__() for e in self.ElevatorList], self.elevatorAmount)
 
-file = r"C:\Users\arieh\OneDrive\Desktop\B5.json"
-# with open(file, 'r') as json_file:
-#     json_load = json.load(json_file)
-# for elevator in json_load["_elevators"]:
-#     newE = Elevator()
-#     print(elevator)
-b = Building(file)
-for i in b.ElevatorArray:
-    print(i.__str__())
+    def get_elevator(self, index):
+        return self.ElevatorList[index]
+
+    # def allocate(self, call_csv):
+    #     call_list = Call(call_csv)
+    #     df = call_list.make_df(call_csv)
+    #     while len(df) != 0:
+    #         for i in range(len(self.ElevatorList)):
+    #             call = df.make_call(0)
+    #             self.ElevatorList[i].addCall2(call)
+
