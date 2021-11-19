@@ -2,7 +2,7 @@ from Call import *
 
 '''
 This is the Elevator class:
-    1. The __init__ receives information from the Building class and initializes an elevator:
+    1. The init receives information from the Building class and initializes an elevator:
         - Elevator ID (index in the elevator-list)
         - Elevator Speed
         - Minimum floor of the elevator.
@@ -11,14 +11,14 @@ This is the Elevator class:
         - Door opening time.
         - Start time (time until the elevator reaches full speed).
         - Stop time (time until elevator reaches a complete stop)
-    2. The __init__ also contains a Call-List. 
+    2. The init also contains a Call-List. 
         - The call list will hold the upcoming calls the elevator need to attend to.
         - Every index represents a call.
-        - Each calls will be in ascending order, according to their timestamps. *****************
-    3. The __init__ also contains a Finish-Time.
+        - Each calls will be in ascending order, according to their timestamps. ***
+    3. The init also contains a Finish-Time.
         - The Finish-time will update itself according to the last call in the call-list.
         - The algorithm will know to choose an elevator according the their Finish-timestamp.
-    4. The __init__ also contains a Floor Timestamp dictionary (key='floor number'(int) : value='timestamp(float)).
+    4. The init also contains a Floor Timestamp dictionary (key='floor number'(int) : value='timestamp(float)).
         - This dictionary allows us to see what the timestamp of the elevator at each floor.
         - This will help us determine if to add a call to the elevator call list.
 '''
@@ -27,7 +27,7 @@ This is the Elevator class:
 class elevator:
     def __init__(self, id, speed, minFloor, maxFloor, closetime, opentime, starttime, stoptime):
         self.id = int(id)
-        self.speed = float(speed)
+        self.speed = 1 / float(speed)
         self.minFloor = int(minFloor)
         self.maxFloor = int(maxFloor)
         self.closetime = float(closetime)
@@ -44,139 +44,118 @@ class elevator:
 
     '''This function adds a call to the elevator call list. It also updates the "Call amount" and "time-Adjuster.'''
 
+    def is_in_Range(self, call):
+        if self.callList[len(self.callList) - 1].originFloor == call.originFloor:
+            stop_time = self.opentime + self.closetime
+            return call.timeStamp <= self.floor_timestamp_dict[call.originFloor] + stop_time
+        else:
+            stop_time = self.stoptime + self.opentime + self.closetime
+            return call.timeStamp <= self.floor_timestamp_dict[call.originFloor] + stop_time
 
-
-    '''This function calculates the absolute time to finish a call(given an elevator and call).'''
-
-    def src2dest_time(self, curr_call):
-        # start_time = curr_call.timeStamp
-        total_floors = abs(curr_call.destFloor - curr_call.originFloor)
-        total_time = (total_floors * self.speed) + self.labor_time
-        return total_time
-
-    '''This function calculates the absolute time from the created call until the destination.'''
-
-    def call2dest_time(self, curr_call):
-        pass
-
-    '''This function adjusts the time-stamp dictionary according to the call.'''
-
-    def added_call_time_Adjuster(self, added_call):
-        call_src = added_call.originFloor
-        call_dest = added_call.destFloor
-        stop_time = self.stoptime + self.opentime + self.speed
-        floors = abs(call_dest - call_src)
-        start_time = self.starttime + self.closetime + self.speed
-        self.floor_timestamp_dict[call_src] = added_call.timeStamp
-        if added_call.is_Up_call:  # UP call
-            self.floor_timestamp_dict[call_src + 1] = self.floor_timestamp_dict[call_src] + start_time
-            if floors == 1:
-                self.floor_timestamp_dict[call_src + 1] += (stop_time - self.speed)
-            elif floors > 3:
-                for i in range(call_src + 2, call_dest):
-                    self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i - 1] + self.speed
-                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
-            else:
-                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
-            if call_dest != self.maxFloor:
-                self.add_default_time(call_dest, call_src)
-        else:  # DOWN call
-            self.floor_timestamp_dict[call_src - 1] = self.floor_timestamp_dict[call_src] + start_time
-            if floors == 1:
-                self.floor_timestamp_dict[call_src - 1] += (stop_time - self.speed)
-            elif floors > 3:
-                for i in range(call_src - 2, call_dest, -1):
-                    self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
-                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
-            else:
-                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
-            if call_dest != self.minFloor:
-                self.add_default_time(call_dest, call_src)
-
-    '''This function adjust the elevator time after the call reached its destination, until it reaches the maximum or
-     minimum floor. '''
-
-    def add_default_time(self, call_dest, call_src):
-        stop_time = self.stoptime + self.opentime + self.speed
-        start_time = self.starttime + self.closetime + self.speed
-        if call_dest >= call_src:  # elevator going UP
-            self.floor_timestamp_dict[call_dest + 1] = self.floor_timestamp_dict[call_dest] + start_time
-            for i in range(call_dest + 2, self.maxFloor):
-                self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i - 1] + self.speed
-            self.floor_timestamp_dict[self.maxFloor] = self.floor_timestamp_dict[self.maxFloor - 1] + stop_time
-        else:  # elevator going DOWN
-            self.floor_timestamp_dict[call_dest - 1] = self.floor_timestamp_dict[call_dest] + start_time
-            for i in range(call_dest - 2, self.minFloor):
-                self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
-            self.floor_timestamp_dict[self.minFloor] = self.floor_timestamp_dict[self.minFloor + 1] + stop_time
 
     def addCall(self, call):
-        stop_time = self.stoptime + self.opentime
-        if not self.callList:  # call is a FIRST call
-            self.added_call_time_Adjuster(call)
-            self.callList.append(call)
-            self.callAmount += 1
+        if len(self.callList) == 0: # If the list is empty
+            empty = True
+            for i in range(self.minFloor, self.maxFloor + 1):
+                if self.floor_timestamp_dict[i] != 0.0:
+                    empty = False
+            if empty:  # call is a FIRST call and dict is empty
+                self.added_call_time_Adjuster(call, call.timeStamp)
+                self.callList.append(call)
+                self.callAmount += 1
+            else: # dict isn't empty
+                self.adjust_not_empty_dict(call)
         else:
             if self.is_in_Range(call):  # The call is in sup range
                 self.callList.append(call)
                 self.callAmount += 1
-                self.floor_timestamp_dict[call.originFloor] += stop_time
-                call.timeStamp = self.floor_timestamp_dict[call.originFloor] + stop_time
-                self.added_call_time_Adjuster(call)
+                timeStamp = call.timeStamp + self.closetime
+                self.added_call_time_Adjuster(call, timeStamp)
 
-    def is_in_Range(self, call):
-        stop_time = self.stoptime + self.opentime
-        return call.timeStamp <= self.floor_timestamp_dict[call.originFloor] + stop_time + self.closetime
 
-        # def is_in_range(self, call_list, call_src, status):
+    ''' function that adjust the dict after it got a future dict from allocate in Ex1'''
 
-    #     if status == 1:
-    #         call_up = df_up(call_list)
-    #         for(i in range(1, len(call_up))):
+    def adjust_not_empty_dict(self, add_call):
+        call_timeStamp = add_call.timeStamp
+        dict_timeStamp = self.floor_timestamp_dict[add_call.originFloor]
+        if call_timeStamp <= dict_timeStamp:
+            self.callList.append(add_call)
+            self.callAmount += 1
+            #add_call.timeStamp = dict_timeStamp #FUCK YOU ARYEH, If you change the add call, it changes the original abject. NEED to make a COPY
+            self.added_call_time_Adjuster(add_call, dict_timeStamp)
+        else:
+            self.added_call_time_Adjuster(add_call, add_call.timeStamp)
+            self.callList.append(add_call)
+            self.callAmount += 1
 
-    # Need to adjust the call timestamp as the starting point.
-    # total_time = self.src2dest_time(added_call)
-    # total_floors = abs(added_call.destFloor - added_call.originFloor)
-    # time_to_add = total_time / total_floors
-    # counter = 1
-    # if added_call.is_Up_call():  # call going UP
-    #     self.floor_timestamp_dict[added_call.originFloor] = added_call.timeStamp
-    #     for i in range(added_call.originFloor + 1, added_call.destFloor + 1):
-    #         self.floor_timestamp_dict[i] = added_call.timeStamp + (time_to_add * counter)
-    #         counter += 1
-    #     self.default_time_adjuster(added_call)
-    #     self.finish_timestamp = self.floor_timestamp_dict[self.maxFloor]
-    # else:  # call going DOWN
-    #     self.floor_timestamp_dict[added_call.originFloor] = added_call.timeStamp
-    #     for i in range(added_call.originFloor - 1, added_call.destFloor - 1, -1):
-    #         self.floor_timestamp_dict[i] = (time_to_add * counter) + added_call.timeStamp
-    #         counter += 1
-    #     self.default_time_adjuster(added_call)
-    #     self.finish_timestamp = self.floor_timestamp_dict[self.minFloor]
+
+    '''This function adjusts the time-stamp dictionary according to the call.'''
+
+    def added_call_time_Adjuster(self, added_call, timeStamp): # Added the timeStamp to adjust by
+        call_src = added_call.originFloor
+        call_dest = added_call.destFloor
+        stop_time = self.stoptime + self.opentime + self.speed
+        start_time = self.starttime + self.closetime + self.speed
+        floors = abs(call_dest - call_src)
+        self.floor_timestamp_dict[call_src] = timeStamp
+        if added_call.status == 1:  # UP call
+            self.floor_timestamp_dict[call_src + 1] = self.floor_timestamp_dict[call_src] + start_time
+            if floors == 1:
+                self.floor_timestamp_dict[call_src + 1] += (stop_time - self.speed)
+            if floors == 2:
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+            if floors == 3:
+                self.floor_timestamp_dict[call_dest-1] = self.floor_timestamp_dict[call_dest-2] + self.speed
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+            else:
+                for i in range(call_src + 2, call_dest):
+                    self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i - 1] + self.speed
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+            # update default
+            if call_dest != self.maxFloor:
+                self.add_default_time(added_call)
+            self.finish_timestamp = self.floor_timestamp_dict[self.maxFloor]
+        else:  # DOWN call
+            self.floor_timestamp_dict[call_src - 1] = self.floor_timestamp_dict[call_src] + start_time
+            if floors == 1:
+                self.floor_timestamp_dict[call_src - 1] += (stop_time - self.speed)
+            if floors == 2:
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
+            if floors == 3:
+                self.floor_timestamp_dict[call_dest + 1] = self.floor_timestamp_dict[call_dest + 2] + self.speed
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest - 1] + stop_time
+            else:
+                for i in range(call_src - 2, call_dest, -1):
+                    self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
+                self.floor_timestamp_dict[call_dest] = self.floor_timestamp_dict[call_dest + 1] + stop_time
+            # update default time
+            if call_dest != self.minFloor:
+                self.add_default_time(added_call)
+            self.finish_timestamp = self.floor_timestamp_dict[self.minFloor]
+
+    '''This function adjust the elevator time after the call reached its destination, until it reaches the maximum or
+     minimum floor. '''
+
+    def add_default_time(self, added_call):
+        stop_time = self.stoptime + self.opentime + self.speed
+        start_time = self.starttime + self.closetime + self.speed
+        if added_call.status == 1:  # elevator going UP
+            self.floor_timestamp_dict[added_call.destFloor + 1] = self.floor_timestamp_dict[added_call.destFloor] + \
+                                                                  start_time
+            for i in range(added_call.destFloor + 2, self.maxFloor):
+                self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i - 1] + self.speed
+            self.floor_timestamp_dict[self.maxFloor] = self.floor_timestamp_dict[self.maxFloor - 1] + stop_time - \
+                                                       self.opentime
+        else:  # elevator going DOWN
+            self.floor_timestamp_dict[added_call.destFloor - 1] = self.floor_timestamp_dict[added_call.destFloor] + \
+                                                                  start_time
+            for i in range(added_call.destFloor - 2, self.minFloor, -1):
+                self.floor_timestamp_dict[i] = self.floor_timestamp_dict[i + 1] + self.speed
+            self.floor_timestamp_dict[self.minFloor] = self.floor_timestamp_dict[self.minFloor + 1] + stop_time - \
+                                                       self.opentime
 
     '''This function adjust the elevator time after the call reached its destination, until it reaches the maximum 
     floor. '''
-
-    # def default_time_adjuster(self, added_call):
-    #     counter = 1
-    #     if added_call.is_Up_call():  # going UP
-    #         floors = self.maxFloor - added_call.destFloor
-    #         if floors == 0:
-    #             time_to_add = 0
-    #         else:
-    #             time_to_add = ((floors * self.speed) + self.labor_time) / floors
-    #         for i in range(added_call.destFloor + 1, self.maxFloor + 1):
-    #             self.floor_timestamp_dict[i] = self.floor_timestamp_dict[added_call.destFloor] + (time_to_add * counter)
-    #             counter += 1
-    #     else:  # going DOWN
-    #         floors = self.maxFloor - self.minFloor
-    #         if floors == 0:
-    #             time_to_add = 0
-    #         else:
-    #             time_to_add = ((floors * self.speed) + self.labor_time) / floors
-    #         for i in range(added_call.destFloor - 1, self.minFloor - 1, -1):
-    #             self.floor_timestamp_dict[i] = self.floor_timestamp_dict[added_call.destFloor] + (time_to_add * counter)
-    #             counter += 1
 
     '''This function returns the given floor time-stamp.'''
 
@@ -227,7 +206,7 @@ class elevator:
                "Open Time: {}\nStart Time: {}\nStop Time: {}\nCall List: {}\nNumber of Calls: {}\n" \
                "Current Finish Time: {}".format(self.id, self.speed, self.minFloor, self.maxFloor, self.closetime,
                                                 self.opentime, self.starttime, self.stoptime,
-                                                [c.__str__() for c in self.callList], self.callAmount,
+                                                [c.str() for c in self.callList], self.callAmount,
                                                 self.finish_timestamp)
 
 # //////////////////////////////////////////////////////////////////////////

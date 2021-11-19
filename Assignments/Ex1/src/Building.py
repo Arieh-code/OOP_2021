@@ -1,6 +1,5 @@
 import json
 from elevator import *
-from Call import *
 
 '''
 This is the Building class:
@@ -36,11 +35,5 @@ class Building:
     def get_elevator(self, index):
         return self.ElevatorList[index]
 
-    # def allocate(self, call_csv):
-    #     call_list = Call(call_csv)
-    #     df = call_list.make_df(call_csv)
-    #     while len(df) != 0:
-    #         for i in range(len(self.ElevatorList)):
-    #             call = df.make_call(0)
-    #             self.ElevatorList[i].addCall2(call)
+
 
