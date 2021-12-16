@@ -20,6 +20,7 @@
       <sourceFolder url="file://$MODULE_DIR$/Class_Material/Week_7" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Class_Material/Week_7/Lesson_7" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Class_Material/Week_7/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/Assignments/Ex2/src" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
     <orderEntry type="jdk" jdkName="openjdk-17 (2)" jdkType="JavaSDK" />

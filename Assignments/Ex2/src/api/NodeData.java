@@ -46,7 +46,7 @@ public interface NodeData {
 	 */
 	public int getTag();
 	/** 
-	 * Allows setting the "tag" value for temporal marking an node - common
+	 * Allows setting the "tag" value for temporal marking a node - common
 	 * practice for marking by algorithms.
 	 * @param t - the new value of the tag
 	 */
