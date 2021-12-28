@@ -16,14 +16,15 @@ public class Book {
         this.year = year;
         this.authors = authors;
     }
+
     public String toString() {
-        String ans = ""+this.getClass().getSimpleName(), au="";
-        for (String a:this.authors) {
-            au +=a+",";
+        String ans = "" + this.getClass().getSimpleName(), au = "";
+        for (String a : this.authors) {
+            au += a + ",";
 
         }
 
-        ans += " | Title: "+this.title+",  ISBN: "+this.isbn+",  Authors: "+au+",  Year: "+this.year;
+        ans += " | Title: " + this.title + ",  ISBN: " + this.isbn + ",  Authors: " + au + ",  Year: " + this.year;
         return ans;
     }
 
